@@ -24,8 +24,6 @@ export function useItemForm({ id, type, reset }: ItemFormHookProps) {
       priority: data.priority as PriorityEnum,
     };
 
-    console.log(itemData);
-
     if (type === "create") {
       addItem(itemData);
     }

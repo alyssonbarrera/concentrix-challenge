@@ -7,7 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose,
 } from "@/components/ui/dialog";
 import { Edit, Plus } from "lucide-react";
 import { ItemForm } from "../forms";
@@ -67,11 +66,18 @@ export function ManageItemButton({
         <ItemForm id={id} type={type} />
 
         <DialogFooter>
-          <DialogClose asChild>
+          {/* 
+            Removido para facilitar a adição de muitos dados
+          */}
+          {/* <DialogClose asChild>
             <Button type="submit" form="item-form">
               Save changes
             </Button>
-          </DialogClose>
+          </DialogClose> */}
+
+          <Button type="submit" form="item-form">
+            Save changes
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

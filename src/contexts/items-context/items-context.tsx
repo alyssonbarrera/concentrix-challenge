@@ -1,7 +1,7 @@
 import { getItemsFromStorage } from "@/storage/get-items-from-storage";
 import { setItemInStorage } from "@/storage/set-item-in-storage";
 import { setItemsInStorage } from "@/storage/set-items-in-storage";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 import { v7 as randomUUID } from "uuid";
 import type {
   CreateItem,
@@ -47,9 +47,12 @@ export function ItemsProvider({ children }: ItemsProviderProps) {
   const [items, setItems] = useState<Item[]>([]);
   const [metadata, setMetadata] = useState(defaultMetadata);
 
-  const getItemById = (id: string) => {
-    return items.find((item) => item.id === id) || null;
-  };
+  const getItemById = useCallback(
+    (id: string) => {
+      return items.find((item) => item.id === id) || null;
+    },
+    [items]
+  );
 
   const addItem = (data: CreateItem) => {
     const item = {
