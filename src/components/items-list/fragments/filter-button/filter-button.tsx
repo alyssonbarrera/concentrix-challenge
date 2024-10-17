@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { ItemFilters } from "@/contexts/items-context";
+import type { ItemFilters } from "@/contexts/items-context/types";
 import { PriorityEnum } from "@/enums/priority-enum";
 import { cn } from "@/lib/utils";
 import { Filter } from "lucide-react";

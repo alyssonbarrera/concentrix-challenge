@@ -1,6 +1,6 @@
 import { Header } from "@/components/header";
 import { ThemeProvider } from "@/contexts/theme-context";
-import { ItemsProvider } from "./contexts/items-context";
+import { ItemsProvider } from "./contexts/items-context/items-context";
 import { ItemsList } from "./components/items-list";
 
 function App() {

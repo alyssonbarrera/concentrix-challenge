@@ -4,6 +4,5 @@ export const getItemsFromStorage = () => {
   if (!items) return [];
 
   const parsedItems = JSON.parse(items);
-
   return parsedItems;
 };

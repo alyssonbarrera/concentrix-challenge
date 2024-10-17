@@ -1,70 +1,42 @@
-import type { PriorityEnum } from "@/enums/priority-enum";
 import { getItemsFromStorage } from "@/storage/get-items-from-storage";
 import { setItemInStorage } from "@/storage/set-item-in-storage";
 import { setItemsInStorage } from "@/storage/set-items-in-storage";
 import { createContext, useEffect, useState } from "react";
 import { v7 as randomUUID } from "uuid";
+import type {
+  CreateItem,
+  FetchItemsProps,
+  Item,
+  ItemsProviderState,
+  UpdateItem,
+} from "./types";
 
-export type Item = {
-  id: string;
-  name: string;
-  description: string;
-  createdAt: string;
-  priority: PriorityEnum;
-};
+function defaultFunction() {
+  return null;
+}
 
-type MetaData = {
-  totalItems: number;
-  totalPages: number;
-  currentPage: number;
-};
-
-type CreateItem = Omit<Item, "id" | "createdAt">;
-type UpdateItem = Partial<CreateItem>;
-
-type ItemsProviderProps = {
-  children: React.ReactNode;
+const defaultMetadata = {
+  totalItems: 0,
+  totalPages: 0,
+  currentPage: 1,
 };
 
 const initialState: ItemsProviderState = {
   items: [],
   loading: true,
-  metadata: {
-    totalItems: 0,
-    totalPages: 0,
-    currentPage: 1,
-  },
-  addItem: () => null,
+  metadata: defaultMetadata,
   fetchItems: () => ({
     data: [],
     metadata: { totalItems: 0, totalPages: 0, currentPage: 1 },
   }),
-  removeItem: () => null,
-  updateItem: () => null,
-  getItemById: () => null,
+  addItem: defaultFunction,
+  removeItem: defaultFunction,
+  updateItem: defaultFunction,
+  getItemById: defaultFunction,
 };
 
-export type ItemFilters = {
-  name?: "asc" | "desc";
-  priority?: PriorityEnum;
-  createdAt?: "asc" | "desc";
-};
-
-type FetchItemsProps = {
-  page: number;
-  limit?: number;
-  filters?: ItemFilters;
-};
-
-type ItemsProviderState = {
-  items: Item[];
-  loading: boolean;
-  metadata: MetaData;
-  addItem: (item: CreateItem) => void;
-  removeItem: (id: string) => void;
-  getItemById: (id: string) => Item | null;
-  fetchItems: (props: FetchItemsProps) => { data: Item[]; metadata: MetaData };
-  updateItem: (id: string, item: UpdateItem) => void;
+type ItemsProviderProps = {
+  children: React.ReactNode;
 };
 
 export const ItemsProviderContext =
@@ -73,11 +45,7 @@ export const ItemsProviderContext =
 export function ItemsProvider({ children }: ItemsProviderProps) {
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<Item[]>([]);
-  const [metadata, setMetadata] = useState({
-    totalItems: 0,
-    totalPages: 0,
-    currentPage: 1,
-  });
+  const [metadata, setMetadata] = useState(defaultMetadata);
 
   const getItemById = (id: string) => {
     return items.find((item) => item.id === id) || null;
@@ -90,11 +58,7 @@ export function ItemsProvider({ children }: ItemsProviderProps) {
       createdAt: new Date().toISOString(),
     };
 
-    setItems((prevItems) => {
-      const newItems = [...prevItems, item];
-      return newItems;
-    });
-
+    setItems([...items, item]);
     setItemInStorage(item);
   };
 

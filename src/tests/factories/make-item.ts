@@ -1,4 +1,4 @@
-import type { Item } from "@/contexts/items-context";
+import type { Item } from "@/contexts/items-context/types";
 import { PriorityEnum } from "@/enums/priority-enum";
 import { v7 as randomUUID } from "uuid";
 
