@@ -12,11 +12,6 @@ vi.spyOn(useItems, "useItems").mockReturnValue({
   getItemById: vi.fn(),
   items: [],
   loading: false,
-  metadata: {
-    totalItems: 0,
-    totalPages: 0,
-    currentPage: 0,
-  },
   updateItem: vi.fn(),
   removeItem: mockRemoveItem,
 });

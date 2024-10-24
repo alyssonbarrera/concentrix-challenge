@@ -11,6 +11,7 @@ import {
 import { Edit, Plus } from "lucide-react";
 import { ItemForm } from "../forms";
 import { Fragment } from "react/jsx-runtime";
+import { useState } from "react";
 
 type ManageItemButtonProps = {
   id?: string;
@@ -31,8 +32,10 @@ export function ManageItemButton({
     update: "Fill in the form below to edit this item.",
   }[type];
 
+  const [dialogIsOpen, setDialogIsOpen] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={dialogIsOpen} onOpenChange={setDialogIsOpen}>
       <DialogTrigger asChild>
         <Button
           type="button"
@@ -63,18 +66,13 @@ export function ManageItemButton({
           <DialogDescription>{dialogDescription}</DialogDescription>
         </DialogHeader>
 
-        <ItemForm id={id} type={type} />
+        <ItemForm
+          id={id}
+          type={type}
+          onSuccessfulSubmit={() => setDialogIsOpen(false)}
+        />
 
         <DialogFooter>
-          {/* 
-            Removido para facilitar a adição de muitos dados
-          */}
-          {/* <DialogClose asChild>
-            <Button type="submit" form="item-form">
-              Save changes
-            </Button>
-          </DialogClose> */}
-
           <Button type="submit" form="item-form">
             Save changes
           </Button>

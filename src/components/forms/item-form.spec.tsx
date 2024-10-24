@@ -3,9 +3,11 @@ import { ItemForm } from "./item-form";
 
 import { userEvent } from "@testing-library/user-event";
 
+const onSuccessfulSubmit = vi.fn();
+
 describe("ItemForm Component", () => {
   it("should be able to render the ItemForm component correctly", () => {
-    render(<ItemForm />);
+    render(<ItemForm onSuccessfulSubmit={onSuccessfulSubmit} />);
 
     const itemForm = screen.getByTestId("item-form");
     const itemNameInput = screen.getByTestId("item-form-input-name");
@@ -25,7 +27,7 @@ describe("ItemForm Component", () => {
   it("should not be able to submit the form when the name and description are empty", async () => {
     render(
       <div>
-        <ItemForm />
+        <ItemForm onSuccessfulSubmit={onSuccessfulSubmit} />
         <button
           type="submit"
           form="item-form"
@@ -40,27 +42,25 @@ describe("ItemForm Component", () => {
 
     userEvent.click(submitButton);
 
-    await waitFor(() => {
-      const fieldErrorMessageName = screen.getByTestId(
-        "item-form-error-message-name"
-      );
-      const fieldErrorMessageDescription = screen.getByTestId(
-        "item-form-error-message-description"
-      );
+    const fieldErrorMessageName = await screen.findByTestId(
+      "item-form-error-message-name"
+    );
+    const fieldErrorMessageDescription = await screen.findByTestId(
+      "item-form-error-message-description"
+    );
 
-      expect(fieldErrorMessageName).toHaveTextContent(
-        "Name must have at least 3 characters"
-      );
-      expect(fieldErrorMessageDescription).toHaveTextContent(
-        "Description must have at least 3 characters"
-      );
-    });
+    expect(fieldErrorMessageName).toHaveTextContent(
+      "Name must have at least 3 characters"
+    );
+    expect(fieldErrorMessageDescription).toHaveTextContent(
+      "Description must have at least 3 characters"
+    );
   });
 
   it("should be able to submit the form when the name and description are filled", async () => {
     render(
       <div>
-        <ItemForm />
+        <ItemForm onSuccessfulSubmit={onSuccessfulSubmit} />
         <button
           type="submit"
           form="item-form"

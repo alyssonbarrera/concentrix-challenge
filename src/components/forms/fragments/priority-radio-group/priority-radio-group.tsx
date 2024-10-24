@@ -2,15 +2,22 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { PriorityEnum } from "@/enums/priority-enum";
 import { cn } from "@/lib/utils";
-import type { RadioGroupProps } from "@radix-ui/react-radio-group";
-import type { ReactNode } from "react";
 
-type PriorityRadioGroupProps = RadioGroupProps;
+import {
+  ComponentPropsWithRef,
+  ElementRef,
+  forwardRef,
+  type ReactNode,
+} from "react";
 
-export function PriorityRadioGroup(props: PriorityRadioGroupProps) {
+const PriorityRadioGroup = forwardRef<
+  ElementRef<typeof RadioGroup>,
+  ComponentPropsWithRef<typeof RadioGroup>
+>((props, ref) => {
   return (
     <RadioGroup
       {...props}
+      ref={ref}
       className={cn("flex gap-4", props.className)}
       data-testid="item-form-radio-group-priority"
     >
@@ -28,8 +35,12 @@ export function PriorityRadioGroup(props: PriorityRadioGroupProps) {
       </RadioGroupContent>
     </RadioGroup>
   );
-}
+});
+
+PriorityRadioGroup.displayName = "PriorityRadioGroup";
 
 function RadioGroupContent({ children }: { children: ReactNode }) {
   return <div className="flex items-center space-x-2">{children}</div>;
 }
+
+export { PriorityRadioGroup };

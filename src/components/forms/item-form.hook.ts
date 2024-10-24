@@ -12,9 +12,15 @@ type ItemFormHookProps = {
     description: string;
     priority: "low" | "medium" | "high";
   }>;
+  onSuccessfulSubmit: () => void;
 };
 
-export function useItemForm({ id, type, reset }: ItemFormHookProps) {
+export function useItemForm({
+  id,
+  type,
+  reset,
+  onSuccessfulSubmit,
+}: ItemFormHookProps) {
   const { addItem, getItemById, updateItem } = useItems();
 
   function onSubmit(data: ItemSchema) {
@@ -31,6 +37,8 @@ export function useItemForm({ id, type, reset }: ItemFormHookProps) {
     if (id && type === "update") {
       updateItem(id, itemData);
     }
+
+    onSuccessfulSubmit();
   }
 
   useEffect(() => {

@@ -54,7 +54,7 @@ export function Pagination({
     currentPage + 1 + siblingsCount < lastPage;
 
   return (
-    <div className="flex gap-2 mt-4 justify-between items-center">
+    <footer className="flex gap-2 mt-4 justify-between items-center">
       <div className="text-foreground font-medium">
         <span>{firstRegisterOnPage}</span> - <span>{lastRegisterOnPage}</span>{" "}
         de <span>{totalCountOfRegisters}</span>
@@ -99,6 +99,6 @@ export function Pagination({
           </Fragment>
         )}
       </div>
-    </div>
+    </footer>
   );
 }

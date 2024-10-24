@@ -32,7 +32,6 @@ export type FetchItemsProps = {
 export type ItemsProviderState = {
   items: Item[];
   loading: boolean;
-  metadata: MetaData;
   addItem: (item: CreateItem) => void;
   removeItem: (id: string) => void;
   getItemById: (id: string) => Item | null;

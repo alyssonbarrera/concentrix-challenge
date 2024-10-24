@@ -15,16 +15,9 @@ function defaultFunction() {
   return null;
 }
 
-const defaultMetadata = {
-  totalItems: 0,
-  totalPages: 0,
-  currentPage: 1,
-};
-
 const initialState: ItemsProviderState = {
   items: [],
   loading: true,
-  metadata: defaultMetadata,
   fetchItems: () => ({
     data: [],
     metadata: { totalItems: 0, totalPages: 0, currentPage: 1 },
@@ -45,7 +38,6 @@ export const ItemsProviderContext =
 export function ItemsProvider({ children }: ItemsProviderProps) {
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<Item[]>([]);
-  const [metadata, setMetadata] = useState(defaultMetadata);
 
   const getItemById = useCallback(
     (id: string) => {
@@ -87,20 +79,16 @@ export function ItemsProvider({ children }: ItemsProviderProps) {
     setItemsInStorage(itemsWithUpdatedItem);
   };
 
-  const sortByName = (items: Item[], order: "asc" | "desc") => {
-    return items.sort((a, b) => {
-      return order === "asc"
-        ? a.name.localeCompare(b.name)
-        : b.name.localeCompare(a.name);
-    });
+  const compareByName = (a: Item, b: Item, order: "asc" | "desc") => {
+    return order === "asc"
+      ? a.name.localeCompare(b.name)
+      : b.name.localeCompare(a.name);
   };
 
-  const sortByCreatedAt = (items: Item[], order: "asc" | "desc") => {
-    return items.sort((a, b) => {
-      return order === "asc"
-        ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
+  const compareByCreatedAt = (a: Item, b: Item, order: "asc" | "desc") => {
+    return order === "asc"
+      ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   };
 
   const filterByPriority = (
@@ -108,6 +96,30 @@ export function ItemsProvider({ children }: ItemsProviderProps) {
     priority: "low" | "medium" | "high"
   ) => {
     return items.filter((item) => item.priority === priority);
+  };
+
+  const sortItems = (
+    a: Item,
+    b: Item,
+    filters?: { name?: "asc" | "desc"; createdAt?: "asc" | "desc" }
+  ) => {
+    if (filters?.name && filters?.createdAt) {
+      const nameComparison = compareByName(a, b, filters.name);
+
+      if (nameComparison !== 0) return nameComparison;
+
+      return compareByCreatedAt(a, b, filters.createdAt);
+    }
+
+    if (filters?.name) {
+      return compareByName(a, b, filters.name);
+    }
+
+    if (filters?.createdAt) {
+      return compareByCreatedAt(a, b, filters.createdAt);
+    }
+
+    return 0;
   };
 
   const fetchItems = (props: FetchItemsProps) => {
@@ -119,13 +131,7 @@ export function ItemsProvider({ children }: ItemsProviderProps) {
       filteredItems = filterByPriority(filteredItems, filters.priority);
     }
 
-    if (filters?.createdAt) {
-      filteredItems = sortByCreatedAt(filteredItems, filters.createdAt);
-    }
-
-    if (filters?.name) {
-      filteredItems = sortByName(filteredItems, filters.name);
-    }
+    filteredItems.sort((a, b) => sortItems(a, b, filters));
 
     const metadata = {
       totalItems: filteredItems.length,
@@ -133,23 +139,16 @@ export function ItemsProvider({ children }: ItemsProviderProps) {
       currentPage: page,
     };
 
-    return {
+    const response = {
       data: filteredItems.slice((page - 1) * limit, page * limit),
       metadata,
     };
+
+    return response;
   };
 
   useEffect(() => {
     const items = getItemsFromStorage();
-
-    const totalItems = items.length;
-    const totalPages = Math.ceil(totalItems / 10);
-
-    setMetadata((prevMetadata) => ({
-      ...prevMetadata,
-      totalItems,
-      totalPages,
-    }));
 
     setItems(items);
     setLoading(false);
@@ -158,7 +157,6 @@ export function ItemsProvider({ children }: ItemsProviderProps) {
   const value = {
     items,
     loading,
-    metadata,
     addItem,
     removeItem,
     fetchItems,

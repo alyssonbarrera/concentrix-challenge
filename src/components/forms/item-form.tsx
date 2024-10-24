@@ -14,9 +14,14 @@ import { useItemForm } from "./item-form.hook";
 type ItemFormProps = {
   id?: string;
   type?: "create" | "update";
+  onSuccessfulSubmit: () => void;
 };
 
-export function ItemForm({ id, type = "create" }: ItemFormProps) {
+export function ItemForm({
+  id,
+  type = "create",
+  onSuccessfulSubmit,
+}: ItemFormProps) {
   const { register, control, reset, handleSubmit, formState } =
     useForm<ItemSchema>({
       resolver: zodResolver(itemSchema),
@@ -29,6 +34,7 @@ export function ItemForm({ id, type = "create" }: ItemFormProps) {
     id,
     type,
     reset,
+    onSuccessfulSubmit,
   });
 
   return (
@@ -78,8 +84,9 @@ export function ItemForm({ id, type = "create" }: ItemFormProps) {
         <Controller
           control={control}
           name="priority"
-          render={({ field: { value, onChange } }) => (
+          render={({ field: { value, onChange, ...props } }) => (
             <PriorityRadioGroup
+              {...props}
               id="priority"
               value={value}
               defaultValue={value}

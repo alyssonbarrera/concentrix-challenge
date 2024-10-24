@@ -47,16 +47,18 @@ describe("FilterButton Component", () => {
 
     expect(dropdownMenu).toBeInTheDocument();
 
-    const dropdownMenuItem = screen.getByTestId(
-      "filter-dropdown-menu-item-asc"
+    const checkboxName = screen.getByTestId(
+      "filter-dropdown-menu-item-checkbox-name-asc"
     );
 
-    userEvent.click(dropdownMenuItem);
+    userEvent.click(checkboxName);
 
     await waitFor(() => {
       expect(onChangeFilter).toHaveBeenCalled();
       expect(onChangeFilter).toHaveBeenCalledTimes(1);
       expect(onChangeFilter).toHaveBeenCalledWith({ name: "asc" });
+
+      expect(checkboxName).toBeChecked();
     });
   });
 });

@@ -37,6 +37,12 @@ export function FilterButton({
     { value: "desc", label: "Created (Newest)" },
   ];
 
+  const toggleFilter = (field: keyof ItemFilters, value: string) => {
+    onChangeFilter({
+      [field]: selectedFilters[field] === value ? undefined : value,
+    });
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -63,70 +69,76 @@ export function FilterButton({
         <DropdownMenuSeparator />
 
         {nameFilters.map((filter) => (
-          <DropdownMenuItem
+          <FilterItem
             key={filter.value}
-            className={cn({
-              "dark:bg-zinc-100 dark:text-zinc-950 bg-zinc-950 text-zinc-100":
-                selectedFilters.name === filter.value,
-            })}
-            onClick={() =>
-              onChangeFilter({
-                name:
-                  selectedFilters.name === filter.value
-                    ? undefined
-                    : (filter.value as "asc" | "desc"),
-              })
-            }
-            data-testid={`filter-dropdown-menu-item-${filter.value}`}
-          >
-            {filter.label}
-          </DropdownMenuItem>
+            field="name"
+            filter={filter}
+            selectedFilters={selectedFilters}
+            toggleFilter={toggleFilter}
+          />
         ))}
 
         <DropdownMenuSeparator />
 
         {priorityFilters.map((filter) => (
-          <DropdownMenuItem
+          <FilterItem
             key={filter.value}
-            className={cn({
-              "dark:bg-zinc-100 dark:text-zinc-950 bg-zinc-950 text-zinc-100":
-                selectedFilters.priority === filter.value,
-            })}
-            onClick={() =>
-              onChangeFilter({
-                priority:
-                  selectedFilters.priority === filter.value
-                    ? undefined
-                    : filter.value,
-              })
-            }
-          >
-            {filter.label}
-          </DropdownMenuItem>
+            field="priority"
+            filter={filter}
+            selectedFilters={selectedFilters}
+            toggleFilter={toggleFilter}
+          />
         ))}
 
         <DropdownMenuSeparator />
 
         {createdAtFilters.map((filter) => (
-          <DropdownMenuItem
+          <FilterItem
             key={filter.value}
-            className={cn({
-              "dark:bg-zinc-100 dark:text-zinc-950 bg-zinc-950 text-zinc-100":
-                selectedFilters.createdAt === filter.value,
-            })}
-            onClick={() =>
-              onChangeFilter({
-                createdAt:
-                  selectedFilters.createdAt === filter.value
-                    ? undefined
-                    : (filter.value as "asc" | "desc"),
-              })
-            }
-          >
-            {filter.label}
-          </DropdownMenuItem>
+            filter={filter}
+            field="createdAt"
+            selectedFilters={selectedFilters}
+            toggleFilter={toggleFilter}
+          />
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
+
+type FilterItemProps = {
+  filter: { value: string; label: string };
+  field: keyof ItemFilters;
+  selectedFilters: ItemFilters;
+  toggleFilter: (field: keyof ItemFilters, value: string) => void;
+};
+
+const FilterItem = ({
+  field,
+  filter,
+  toggleFilter,
+  selectedFilters,
+}: FilterItemProps) => (
+  <DropdownMenuItem
+    key={filter.value}
+    className={cn({
+      "dark:bg-zinc-100 dark:text-zinc-950 bg-zinc-950 text-zinc-100":
+        selectedFilters[field] === filter.value,
+    })}
+  >
+    <input
+      type="checkbox"
+      id={`${field}-${filter.value}`}
+      hidden={true}
+      checked={selectedFilters[field] === filter.value}
+      onChange={() => toggleFilter(field, filter.value)}
+      data-testid={`filter-dropdown-menu-item-checkbox-${field}-${filter.value}`}
+    />
+    <label
+      htmlFor={`${field}-${filter.value}`}
+      className="cursor-pointer w-full"
+    >
+      {filter.label}
+    </label>
+  </DropdownMenuItem>
+);
